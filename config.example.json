@@ -1,0 +1,13 @@
+{
+  "alpaca": {
+    "keyId": "SOMEKEY",
+    "secretKey": "SOME/OTHER/KEY",
+    "paper": true
+  },
+
+  "methods": {
+    "simple": {
+      "stocks": ["CHK"]
+    }
+  }
+}
