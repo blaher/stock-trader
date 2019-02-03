@@ -67,8 +67,10 @@ function after_position(account, stock, asset, position) {
 
     console.log('Figuring current position and cash for '+stock+'...');
     const position_value_for_stock = position.market_value;
+    const stocks_owned = position.qty;
     const cash_for_stock = value_per_stock - position_value_for_stock;
     console.log('position_value_for_stock: ', position_value_for_stock);
+    console.log('stocks_owned: ', stocks_owned);
     console.log('cash_for_stock: ', cash_for_stock);
 
     console.log('Figuring buy orders for '+stock+'...');
@@ -119,6 +121,38 @@ function after_position(account, stock, asset, position) {
 
     console.log('Figuring sell orders for '+stock+'...');
     var sell_orders = [];
+    current_price = (Math.round(current*100)+Math.round(simple_config.stock_difference_increment*100))/100;
+
+    var sell_increment = Math.ceil(min_usd_per_transaction/current);
+    var sell_difference = simple_config.stock_difference_increment;
+    var sell_audit_amount = 0;
+    var stocks_left = stocks_owned;
+
+    count = 0;
+    for (var i = current_price; i <= max;) {
+      i = (Math.round(i*100)+Math.round(sell_difference*100))/100
+      count++;
+    }
+
+    if (cash_for_stock / buy_increment > count) {
+      sell_increment = Math.ceil(stocks_owned/count);
+    }
+
+    while (current_price <= max && stocks_left >= sell_increment && stocks_left > 0) {
+      var quantity = sell_increment;
+
+      sell_orders.push({
+        stock: stock,
+        price: current_price,
+        quantity: quantity
+      });
+      sell_audit_amount += quantity;
+
+      current_price = (Math.round(current_price*100)+Math.round(buy_difference*100))/100;
+      stocks_left -= quantity;
+    }
+    console.log('sell_orders: ', sell_orders);
+    console.log('sell_audit_amount: ', sell_audit_amount);
 
     //execute_orders(buy_orders, sell_orders);
   });
@@ -143,7 +177,8 @@ alpaca.getAccount().then(function(account) {
                 after_position(account, stock, asset, position);
               }, function() {
                 var position = {
-                  market_value: 0
+                  market_value: 0,
+                  qty: 0
                 };
 
                 after_position(account, stock, asset, position);
