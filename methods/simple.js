@@ -75,6 +75,11 @@ function after_position(account, stock, asset, position) {
     var buy_orders = [];
     var current_price = (Math.round(current*100)-Math.round(simple_config.stock_difference_increment*100))/100;
     var cash_left = cash_for_stock;
+
+    if (cash_left > account.buying_power) {
+      cash_left = account.buying_power;
+    }
+
     const min_usd_per_transaction = simple_config.min_usd_per_transaction;
     var buy_increment = min_usd_per_transaction;
     var buy_difference = simple_config.stock_difference_increment;
