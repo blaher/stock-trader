@@ -7,6 +7,34 @@ const Alpaca = require('@alpacahq/alpaca-trade-api');
 
 const alpaca = new Alpaca(config.alpaca);
 
+function execute_orders(buy_orders, sell_orders) {
+  console.log('Generating buy orders...');
+  buy_orders.forEach(function(buy_order) {
+    alpaca.createOrder({
+      symbol: buy_order.stock,
+      qty: buy_order.quantity,
+      side: 'buy',
+      type: 'limit',
+      time_in_force: 'day',
+      limit_price: buy_order.price
+    });
+  });
+
+  console.log('Generating sell orders...');
+  sell_orders.forEach(function(sell_order) {
+    alpaca.createOrder({
+      symbol: sell_order.stock,
+      qty: sell_order.quantity,
+      side: 'sell',
+      type: 'limit',
+      time_in_force: 'day',
+      limit_price: sell_order.price
+    });
+  });
+
+  console.log('Completed!');
+}
+
 function after_position(account, stock, asset, position) {
   console.log('Getting bar data for stock '+stock+'...');
   alpaca.getBars('day', stock, {
@@ -72,6 +100,7 @@ function after_position(account, stock, asset, position) {
       }
 
       buy_orders.push({
+        stock: stock,
         price: current_price,
         quantity: quantity
       });
@@ -85,6 +114,8 @@ function after_position(account, stock, asset, position) {
 
     console.log('Figuring sell orders for '+stock+'...');
     var sell_orders = [];
+
+    //execute_orders(buy_orders, sell_orders);
   });
 }
 
@@ -95,7 +126,7 @@ alpaca.getAccount().then(function(account) {
     console.log('Getting clock information...');
     alpaca.getClock().then(function(clock) {
       console.log('Making sure markets are open...');
-      if (clock.is_open || true) {
+      if (clock.is_open) {
         console.log('Looping through stocks...');
         stocks.forEach(function(stock) {
           console.log('Getting stock information for '+stock+'...');
