@@ -136,13 +136,10 @@ router.post('/', function(req, res) {
         var sell_audit_amount = 0;
         var stocks_left = stocks_owned;
 
-
-        console.log(stocks_left);
         orders.forEach(function(order) {
           if (order.side === 'sell' && order.symbol === stock) {
             stocks_left -= order.qty;
           }
-          console.log(stocks_left);
         });
 
         count = 0;
