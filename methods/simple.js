@@ -10,7 +10,7 @@ var router = express.Router();
 
 const alpaca = new Alpaca(config.alpaca);
 
-router.get('/', function(req, res) {
+router.post('/', function(req, res) {
   function execute_orders(buy_orders, sell_orders) {
     console.log('Generating buy orders...');
     buy_orders.forEach(function(buy_order) {
