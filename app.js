@@ -34,10 +34,6 @@ const client = alpaca.websocket;
 client.onConnect(function() {
   console.log('Connected to websocket!');
   client.subscribe(['trade_updates']);
-
-  setTimeout(function() {
-    client.disconnect();
-  }, 30 * 1000);
 });
 
 client.onDisconnect(function() {
