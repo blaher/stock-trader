@@ -134,7 +134,7 @@ function after_position(account, stock, asset, position) {
       count++;
     }
 
-    if (cash_for_stock / buy_increment > count) {
+    if (cash_for_stock/buy_increment > count && stocks_owned/count > sell_increment) {
       sell_increment = Math.ceil(stocks_owned/count);
     }
 
@@ -154,7 +154,7 @@ function after_position(account, stock, asset, position) {
     console.log('sell_orders: ', sell_orders);
     console.log('sell_audit_amount: ', sell_audit_amount);
 
-    //execute_orders(buy_orders, sell_orders);
+    execute_orders(buy_orders, sell_orders);
   });
 }
 
