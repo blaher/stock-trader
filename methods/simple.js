@@ -171,7 +171,7 @@ router.post('/', function(req, res) {
         console.log('sell_orders: ', sell_orders);
         console.log('sell_audit_amount: ', sell_audit_amount);
 
-        //execute_orders(buy_orders, sell_orders);
+        execute_orders(buy_orders, sell_orders);
       });
     });
   }
