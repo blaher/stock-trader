@@ -1,8 +1,8 @@
 console.log('Setting up...');
 
-const config = require('../config.json');
-const simple_config = config.methods.simple;
-const stocks = simple_config.stocks;
+const config = require('./config.json');
+const trading_config = config.trading;
+const stocks = trading_config.stocks;
 const Alpaca = require('@alpacahq/alpaca-trade-api');
 
 var express = require('express');
@@ -83,16 +83,16 @@ router.post('/', function(req, res) {
 
         console.log('Figuring buy orders for '+stock+'...');
         var buy_orders = [];
-        var current_price = (Math.round(current*100)-Math.round(simple_config.stock_difference_increment*100))/100;
+        var current_price = (Math.round(current*100)-Math.round(trading_config.stock_difference_increment*100))/100;
         var cash_left = cash_for_stock;
 
         if (cash_left > account.buying_power) {
           cash_left = account.buying_power;
         }
 
-        const min_usd_per_transaction = simple_config.min_usd_per_transaction;
+        const min_usd_per_transaction = trading_config.min_usd_per_transaction;
         var buy_increment = min_usd_per_transaction;
-        var buy_difference = simple_config.stock_difference_increment;
+        var buy_difference = trading_config.stock_difference_increment;
         var buy_audit_amount = 0;
 
         var count = 0;
@@ -129,10 +129,10 @@ router.post('/', function(req, res) {
 
         console.log('Figuring sell orders for '+stock+'...');
         var sell_orders = [];
-        current_price = (Math.round(current*100)+Math.round(simple_config.stock_difference_increment*100))/100;
+        current_price = (Math.round(current*100)+Math.round(trading_config.stock_difference_increment*100))/100;
 
         var sell_increment = Math.ceil(min_usd_per_transaction/current);
-        var sell_difference = simple_config.stock_difference_increment;
+        var sell_difference = trading_config.stock_difference_increment;
         var sell_audit_amount = 0;
         var stocks_left = stocks_owned;
 
