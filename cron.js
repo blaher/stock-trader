@@ -129,6 +129,7 @@ router.post('/', function(req, res) {
 
         console.log('Figuring sell orders for '+stock+'...');
         var sell_orders = [];
+        /*
         current_price = (Math.round(current*100)+Math.round(trading_config.stock_difference_increment*100))/100;
 
         var sell_increment = Math.ceil(min_usd_per_transaction/current);
@@ -167,6 +168,7 @@ router.post('/', function(req, res) {
         }
         console.log('sell_orders: ', sell_orders);
         console.log('sell_audit_amount: ', sell_audit_amount);
+        */
 
         execute_orders(buy_orders, sell_orders);
       });

@@ -5,11 +5,9 @@
     "paper": true
   },
 
-  "methods": {
-    "simple": {
-      "stocks": ["CHK"],
-      "min_usd_per_transaction": 5000,
-      "stock_difference_increment": 0.01
-    }
+  "trading": {
+    "stocks": ["CHK"],
+    "min_usd_per_transaction": 5000,
+    "stock_difference_increment": 0.01
   }
 }

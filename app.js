@@ -15,6 +15,49 @@ alpaca.getOrders({
   });
 });
 
+console.log('Selling all positions...');
+alpaca.getPositions().then(function(positions) {
+  positions.forEach(function(position) {
+    alpaca.createOrder({
+      symbol: position.symbol,
+      qty: position.qty,
+      side: 'sell',
+      type: 'market',
+      time_in_force: 'day'
+    });
+  });
+});
+
+console.log('Setting up websocket...');
+const client = alpaca.websocket;
+
+client.onConnect(function() {
+  console.log('Connected to websocket!');
+  client.subscribe(['trade_updates']);
+
+  setTimeout(function() {
+    client.disconnect();
+  }, 30 * 1000);
+});
+
+client.onDisconnect(function() {
+  console.log('Disconnected from websocket!')
+});
+
+client.onOrderUpdate(function(data) {
+  console.log('Order updated...');
+  if (data.event === 'fill' && data.order && data.order.side === 'buy') {
+    alpaca.createOrder({
+      symbol: order.symbol,
+      qty: order.qty,
+      side: 'sell',
+      type: 'limit',
+      time_in_force: 'gtc',
+      limit_price: order.limit_price + config.trading.stock_difference_increment
+    });
+  }
+})
+
 var methods_simple = require('./methods/simple');
 
 app.use('/methods/simple', methods_simple);
