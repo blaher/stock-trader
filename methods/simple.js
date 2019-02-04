@@ -40,7 +40,7 @@ router.post('/', function(req, res) {
     res.send('Completed!');
   }
 
-  function after_position(account, stock, asset, position) {
+  function after_position(account, stock, asset, orders, position) {
     console.log('Getting bar data for stock '+stock+'...');
     alpaca.getBars('day', stock, {
       limit: 5
@@ -136,6 +136,15 @@ router.post('/', function(req, res) {
         var sell_audit_amount = 0;
         var stocks_left = stocks_owned;
 
+
+        console.log(stocks_left);
+        orders.forEach(function(order) {
+          if (order.side === 'sell' && order.symbol === stock) {
+            stocks_left -= order.qty;
+          }
+          console.log(stocks_left);
+        });
+
         count = 0;
         for (var i = current_price; i <= max;) {
           i = (Math.round(i*100)+Math.round(sell_difference*100))/100
@@ -162,7 +171,7 @@ router.post('/', function(req, res) {
         console.log('sell_orders: ', sell_orders);
         console.log('sell_audit_amount: ', sell_audit_amount);
 
-        execute_orders(buy_orders, sell_orders);
+        //execute_orders(buy_orders, sell_orders);
       });
     });
   }
@@ -181,16 +190,21 @@ router.post('/', function(req, res) {
             alpaca.getAsset(stock).then(function(asset) {
               console.log('Checking if '+stock+' is tradable...');
               if (asset.tradable) {
-                console.log('Getting position for '+stock+'...');
-                alpaca.getPosition(stock).then(function(position) {
-                  after_position(account, stock, asset, position);
-                }, function() {
-                  var position = {
-                    market_value: 0,
-                    qty: 0
-                  };
+                console.log('Getting orders...');
+                alpaca.getOrders({
+                  status: 'open'
+                }).then(function(orders) {
+                  console.log('Getting position for '+stock+'...');
+                  alpaca.getPosition(stock).then(function(position) {
+                    after_position(account, stock, asset, orders, position);
+                  }, function() {
+                    var position = {
+                      market_value: 0,
+                      qty: 0
+                    };
 
-                  after_position(account, stock, asset, position);
+                    after_position(account, stock, asset, orders, position);
+                  });
                 });
               }
             });
