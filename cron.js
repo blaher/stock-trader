@@ -24,7 +24,7 @@ router.post('/', function(req, res) {
       });
     });
 
-    console.log('Generating sell orders...');
+    /*console.log('Generating sell orders...');
     sell_orders.forEach(function(sell_order) {
       alpaca.createOrder({
         symbol: sell_order.stock,
@@ -34,7 +34,7 @@ router.post('/', function(req, res) {
         time_in_force: 'day',
         limit_price: sell_order.price
       });
-    });
+    });*/
 
     console.log('Completed!');
     res.send('Completed!');
@@ -189,9 +189,11 @@ router.post('/', function(req, res) {
       }).then(function(orders) {
         var promises = [];
 
-        console.log('Canceling all current orders...');
+        console.log('Canceling all current buy orders...');
         orders.forEach(function(order) {
-          promises.push(alpaca.cancelOrder(order.id));
+          if (order.side === 'buy') {
+            promises.push(alpaca.cancelOrder(order.id));
+          }
         });
 
         Promise.all(promises).then(function() {
