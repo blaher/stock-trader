@@ -70,7 +70,9 @@ router.post('/', function(req, res) {
         });
         current = Math.round(latest_bars[0].c*100)/100;
         min = current-((current-min)/2);
+        min = Math.floor(min*100)/100;
         max = current+((max-current)/2);
+        max = Math.ceil(max*100)/100;
         console.log('max: ', max);
         console.log('min: ', min);
         console.log('current: ', current);
