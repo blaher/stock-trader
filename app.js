@@ -13,23 +13,31 @@ alpaca.getOrders({
   var promises = [];
   orders.forEach(function(order) {
     console.log('Canceling order...');
-    promises.push(alpaca.cancelOrder(order.id));
+    var promise = alpaca.cancelOrder(order.id);
+
+    promise.then(function(data) {
+      console.log(data);
+    });
+
+    promises.push(promise);
   });
 
   Promise.all(promises).then(function() {
-    console.log('Selling all positions...');
-    alpaca.getPositions().then(function(positions) {
-      positions.forEach(function(position) {
-        console.log('Selling position...');
-        alpaca.createOrder({
-          symbol: position.symbol,
-          qty: position.qty,
-          side: 'sell',
-          type: 'market',
-          time_in_force: 'day'
+    setTimeout(function() {
+      console.log('Selling all positions...');
+      alpaca.getPositions().then(function(positions) {
+        positions.forEach(function(position) {
+          console.log('Selling position...');
+          alpaca.createOrder({
+            symbol: position.symbol,
+            qty: position.qty,
+            side: 'sell',
+            type: 'market',
+            time_in_force: 'day'
+          });
         });
       });
-    });
+    }, 10*1000);
 
     console.log('Setting up websocket...');
     const client = alpaca.websocket;
