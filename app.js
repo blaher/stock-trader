@@ -13,13 +13,7 @@ alpaca.getOrders({
   var promises = [];
   orders.forEach(function(order) {
     console.log('Canceling order...');
-    var promise = alpaca.cancelOrder(order.id);
-
-    promise.then(function(data) {
-      console.log(data);
-    });
-
-    promises.push(promise);
+    promises.push(alpaca.cancelOrder(order.id));
   });
 
   Promise.all(promises).then(function() {
