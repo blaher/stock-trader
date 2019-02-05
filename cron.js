@@ -197,35 +197,37 @@ router.post('/', function(req, res) {
         });
 
         Promise.all(promises).then(function() {
-          console.log('Getting account information...');
-          alpaca.getAccount().then(function(account) {
-            console.log('Making sure account is good...');
-            if (!account.account_blocked && !account.trading_blocked && account.portfolio_value > 25000) {
-              console.log('Looping through stocks...');
-              stocks.forEach(function(stock) {
-                console.log('Getting stock information for '+stock+'...');
-                alpaca.getAsset(stock).then(function(asset) {
-                  console.log('Checking if '+stock+' is tradable...');
-                  if (asset.tradable) {
-                    console.log('Getting position for '+stock+'...');
-                    alpaca.getPosition(stock).then(function(position) {
-                      after_position(account, stock, asset, orders, position);
-                    }, function() {
-                      var position = {
-                        market_value: 0,
-                        qty: 0
-                      };
+          setTimeout(function() {
+            console.log('Getting account information...');
+            alpaca.getAccount().then(function(account) {
+              console.log('Making sure account is good...');
+              if (!account.account_blocked && !account.trading_blocked && account.portfolio_value > 25000) {
+                console.log('Looping through stocks...');
+                stocks.forEach(function(stock) {
+                  console.log('Getting stock information for '+stock+'...');
+                  alpaca.getAsset(stock).then(function(asset) {
+                    console.log('Checking if '+stock+' is tradable...');
+                    if (asset.tradable) {
+                      console.log('Getting position for '+stock+'...');
+                      alpaca.getPosition(stock).then(function(position) {
+                        after_position(account, stock, asset, orders, position);
+                      }, function() {
+                        var position = {
+                          market_value: 0,
+                          qty: 0
+                        };
 
-                      after_position(account, stock, asset, orders, position);
-                    });
-                  }
+                        after_position(account, stock, asset, orders, position);
+                      });
+                    }
+                  });
                 });
-              });
-            } else {
-              console.log('Account not able to trade!');
-              res.send('Account not able to trade!');
-            }
-          });
+              } else {
+                console.log('Account not able to trade!');
+                res.send('Account not able to trade!');
+              }
+            });
+          }, 60*1000);
         });
       });
     } else {

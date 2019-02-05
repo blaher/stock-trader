@@ -2,4 +2,4 @@ version: 1
 cron:
  - name: "cron"
    url: "/cron"
-   schedule: "* * * * *"
+   schedule: "*/5 * * * *"
