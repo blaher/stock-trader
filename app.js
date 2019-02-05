@@ -42,7 +42,7 @@ alpaca.getOrders({
     });
 
     client.onOrderUpdate(function(data) {
-      console.log('Order updated...');
+      console.log('Order updated...');console.log(data);
       if (data.event === 'fill' && data.order && data.order.side === 'buy') {
         alpaca.createOrder({
           symbol: data.order.symbol,
