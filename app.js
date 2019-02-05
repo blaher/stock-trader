@@ -10,49 +10,54 @@ console.log('Canceling all orders...');
 alpaca.getOrders({
   status: 'open'
 }).then(function(orders) {
+  var promises = [];
   orders.forEach(function(order) {
-    alpaca.cancelOrder(order.id);
+    promises.push(alpaca.cancelOrder(order.id));
+  });
+
+  Promise.all(promises).then(function() {
+    console.log('Selling all positions...');
+    alpaca.getPositions().then(function(positions) {
+      positions.forEach(function(position) {
+        alpaca.createOrder({
+          symbol: position.symbol,
+          qty: position.qty,
+          side: 'sell',
+          type: 'market',
+          time_in_force: 'day'
+        });
+      });
+    });
+
+    console.log('Setting up websocket...');
+    const client = alpaca.websocket;
+
+    client.onConnect(function() {
+      console.log('Connected to websocket!');
+      client.subscribe(['trade_updates']);
+    });
+
+    client.onDisconnect(function() {
+      console.log('Disconnected from websocket!')
+    });
+
+    client.onOrderUpdate(function(data) {
+      console.log('Order updated...');
+      if (data.event === 'fill' && data.order && data.order.side === 'buy') {
+        alpaca.createOrder({
+          symbol: order.symbol,
+          qty: order.qty,
+          side: 'sell',
+          type: 'limit',
+          time_in_force: 'gtc',
+          limit_price: order.limit_price + config.trading.stock_difference_increment
+        });
+      }
+    });
+
+    client.connect();
   });
 });
-
-console.log('Selling all positions...');
-alpaca.getPositions().then(function(positions) {
-  positions.forEach(function(position) {
-    alpaca.createOrder({
-      symbol: position.symbol,
-      qty: position.qty,
-      side: 'sell',
-      type: 'market',
-      time_in_force: 'day'
-    });
-  });
-});
-
-console.log('Setting up websocket...');
-const client = alpaca.websocket;
-
-client.onConnect(function() {
-  console.log('Connected to websocket!');
-  client.subscribe(['trade_updates']);
-});
-
-client.onDisconnect(function() {
-  console.log('Disconnected from websocket!')
-});
-
-client.onOrderUpdate(function(data) {
-  console.log('Order updated...');
-  if (data.event === 'fill' && data.order && data.order.side === 'buy') {
-    alpaca.createOrder({
-      symbol: order.symbol,
-      qty: order.qty,
-      side: 'sell',
-      type: 'limit',
-      time_in_force: 'gtc',
-      limit_price: order.limit_price + config.trading.stock_difference_increment
-    });
-  }
-})
 
 var cron = require('./cron');
 
