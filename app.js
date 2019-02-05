@@ -48,21 +48,14 @@ alpaca.getOrders({
     client.onOrderUpdate(function(data) {
       console.log('Order updated...');
       if (data.event === 'fill' && data.order && data.order.side === 'buy') {
-        console.log({
-          symbol: data.order.symbol,
-          qty: data.order.qty,
-          side: 'sell',
-          type: 'limit',
-          time_in_force: 'gtc',
-          limit_price: parseFloat(data.order.limit_price) + config.trading.stock_difference_increment
-        });
+        console.log('Selling stock...');
         alpaca.createOrder({
           symbol: data.order.symbol,
           qty: data.order.qty,
           side: 'sell',
           type: 'limit',
           time_in_force: 'gtc',
-          limit_price: parseFloat(data.order.limit_price) + config.trading.stock_difference_increment
+          limit_price: Math.round((parseFloat(data.order.limit_price)+config.trading.stock_difference_increment)*100)/100
         });
       }
     });
