@@ -1,2 +1,2 @@
 # stock-trader
-An active trading collection for using on top of Alpaca
+An active trading bot for using on top of Alpaca
