@@ -177,14 +177,14 @@ router.post('/', function(req, res) {
     });
   }
 
-  console.log('Getting account information...');
-  alpaca.getAccount().then(function(account) {
-    console.log('Making sure account is good...');
-    if (!account.account_blocked && !account.trading_blocked && account.portfolio_value > 25000) {
-      console.log('Getting clock information...');
-      alpaca.getClock().then(function(clock) {
-        console.log('Making sure markets are open...');
-        if (clock.is_open) {
+  console.log('Getting clock information...');
+  alpaca.getClock().then(function(clock) {
+    console.log('Making sure markets are open...');
+    if (clock.is_open) {
+      console.log('Getting account information...');
+      alpaca.getAccount().then(function(account) {
+        console.log('Making sure account is good...');
+        if (!account.account_blocked && !account.trading_blocked && account.portfolio_value > 25000) {
           console.log('Looping through stocks...');
           stocks.forEach(function(stock) {
             console.log('Getting stock information for '+stock+'...');
@@ -211,13 +211,13 @@ router.post('/', function(req, res) {
             });
           });
         } else {
-          console.log('Currently afterhours!');
-          res.send('Currently afterhours!');
+          console.log('Account not able to trade!');
+          res.send('Account not able to trade!');
         }
       });
     } else {
-      console.log('Account not able to trade!');
-      res.send('Account not able to trade!');
+      console.log('Currently afterhours!');
+      res.send('Currently afterhours!');
     }
   });
 });
