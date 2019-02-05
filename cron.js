@@ -227,7 +227,7 @@ router.post('/', function(req, res) {
                 res.send('Account not able to trade!');
               }
             });
-          }, 30*1000);
+          }, 10*1000);
         });
       });
     } else {
