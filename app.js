@@ -54,9 +54,9 @@ client.onOrderUpdate(function(data) {
   }
 })
 
-var methods_simple = require('./methods/simple');
+var cron = require('./cron');
 
-app.use('/methods/simple', methods_simple);
+app.use('/cron', cron);
 
 app.listen(8081, function() {
   console.log('Set up!');

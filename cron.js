@@ -69,6 +69,9 @@ router.post('/', function(req, res) {
           }
         });
         current = Math.round(latest_bars[0].c*100)/100;
+        console.log(min);
+        min = current-((current-min)/2);
+        console.log(min);
         console.log('max: ', max);
         console.log('min: ', min);
         console.log('current: ', current);
