@@ -105,13 +105,13 @@ router.post('/', function(req, res) {
           count++;
         }
 
-        if (cash_for_stock / buy_increment > count) {
+        if (cash_for_stock / buy_increment > count && count > 0) {
           buy_increment = cash_for_stock / count;
         }
 
         while (current_price >= min && cash_left >= min_usd_per_transaction) {
           var quantity = Math.round(buy_increment*100)/Math.round(current_price*100);
-          quantity = Math.ceil(quantity);
+          quantity = Math.floor(quantity);
 
           if (buy_increment > cash_left) {
             quantity = Math.round(cash_left*100)/Math.round(current_price*100);
