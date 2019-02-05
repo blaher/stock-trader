@@ -12,6 +12,7 @@ alpaca.getOrders({
 }).then(function(orders) {
   var promises = [];
   orders.forEach(function(order) {
+    console.log('Canceling order...');
     promises.push(alpaca.cancelOrder(order.id));
   });
 
@@ -19,6 +20,7 @@ alpaca.getOrders({
     console.log('Selling all positions...');
     alpaca.getPositions().then(function(positions) {
       positions.forEach(function(position) {
+        console.log('Selling position...');
         alpaca.createOrder({
           symbol: position.symbol,
           qty: position.qty,

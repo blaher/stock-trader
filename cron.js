@@ -192,6 +192,7 @@ router.post('/', function(req, res) {
         console.log('Canceling all current buy orders...');
         orders.forEach(function(order) {
           if (order.side === 'buy') {
+            console.log('Canceling order...');
             promises.push(alpaca.cancelOrder(order.id));
           }
         });
