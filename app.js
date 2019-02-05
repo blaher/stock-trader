@@ -52,7 +52,7 @@ alpaca.getOrders({
           side: 'sell',
           type: 'limit',
           time_in_force: 'gtc',
-          limit_price: data.order.limit_price + config.trading.stock_difference_increment
+          limit_price: parseFloat(data.order.limit_price) + config.trading.stock_difference_increment
         });
         alpaca.createOrder({
           symbol: data.order.symbol,
@@ -60,7 +60,7 @@ alpaca.getOrders({
           side: 'sell',
           type: 'limit',
           time_in_force: 'gtc',
-          limit_price: data.order.limit_price + config.trading.stock_difference_increment
+          limit_price: parseFloat(data.order.limit_price) + config.trading.stock_difference_increment
         });
       }
     });
